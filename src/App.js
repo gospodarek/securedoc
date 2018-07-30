@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import SimpleStorageContract from '../build/contracts/SimpleStorage.json'
 import getWeb3 from './utils/getWeb3'
+import ipfsInstance from './ipfs'
 
 import './css/oswald.css'
 import './css/open-sans.css'
@@ -12,9 +13,13 @@ class App extends Component {
     super(props)
 
     this.state = {
-      storageValue: 0,
-      web3: null
+      ipfsInstanceHash: '',
+      web3: null,
+      buffer: null,
+      account: null
     }
+    this.captureFile = this.captureFile.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
   }
 
   componentWillMount() {
@@ -67,22 +72,57 @@ class App extends Component {
     })
   }
 
+  captureFile(event) {
+    // need to format file here
+    console.log("capturing file")
+    event.preventDefault()
+    const file = event.target.files[0]
+    const reader = new window.FileReader()
+    reader.readAsArrayBuffer(file)
+    reader.onloadend = () => {
+      this.setState({ buffer: Buffer.from(reader.result) })
+    }
+  }
+
+  onSubmit(event) {
+    console.log("submitting to IPFS")
+    event.preventDefault()
+    console.log("this.state.buffer", this.state.buffer)
+    ipfsInstance.files.add(this.state.buffer, (error, result) => {
+      console.log("added")
+      if(error) {
+        console.error(error)
+        return
+      }
+      console.log("result[0]",result[0])
+      this.simpleStorageInstance.set(result[0].hash, { from: this.state.account }).then((r) => {
+        return this.setState({ ipfsInstanceHash: result[0].hash })
+        console.log('ipfsInstanceHash', this.state.ipfsInstanceHash)
+      })
+    })
+  }
+
+
   render() {
     return (
       <div className="App">
         <nav className="navbar pure-menu pure-menu-horizontal">
-            <a href="#" className="pure-menu-heading pure-menu-link">Truffle Box</a>
+            <a href="#" className="pure-menu-heading pure-menu-link">Secure Doc</a>Store your docs between the planets
         </nav>
 
         <main className="container">
           <div className="pure-g">
             <div className="pure-u-1-1">
-              <h1>Good to Go!</h1>
-              <p>Your Truffle Box is installed and ready.</p>
-              <h2>Smart Contract Example</h2>
-              <p>If your contracts compiled and migrated successfully, below will show a stored value of 5 (by default).</p>
-              <p>Try changing the value stored on <strong>line 59</strong> of App.js.</p>
-              <p>The stored value is: {this.state.storageValue}</p>
+              <h1>Welcome!</h1>
+              <img src={`https://ipfs.io/ipfs/${this.state.ipfsHash}`} alt=""/>
+              <h2>Upload Your Doc...</h2>
+              <form onSubmit={this.onSubmit} >
+                <input type='file' onChange={this.captureFile} />
+                <input type='submit' />
+              </form>
+
+              <h1>Your Doc</h1>
+              <p>This document is stored on The Ethereum Blockchain!</p>
             </div>
           </div>
         </main>
