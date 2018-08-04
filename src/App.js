@@ -52,22 +52,17 @@ class App extends Component {
     const simpleStorage = contract(SimpleStorageContract)
     simpleStorage.setProvider(this.state.web3.currentProvider)
 
-    // Declaring this for later so we can chain functions on SimpleStorage.
-    var simpleStorageInstance
-
-    // Get accounts.
+    // Get accounts.s
     this.state.web3.eth.getAccounts((error, accounts) => {
       simpleStorage.deployed().then((instance) => {
-        simpleStorageInstance = instance
-
-        // Stores a given value, 5 by default.
-        return simpleStorageInstance.set(5, {from: accounts[0]})
-      }).then((result) => {
-        // Get the value from the contract to prove it worked.
-        return simpleStorageInstance.get.call(accounts[0])
-      }).then((result) => {
-        // Update state with the result.
-        return this.setState({ storageValue: result.c[0] })
+        this.simpleStorageInstance = instance
+        console.log("account: ", accounts[0])
+        this.setState({ account: accounts[0] }) // the account connected to blockchain
+        // Read the value from the contract to prove it worked.
+        return this.simpleStorageInstance.get.call(accounts[0])
+      }).then((ipfsInstanceHash) => {
+        // Update state with value that was set to blockchain
+        return this.setState({ ipfsInstanceHash })
       })
     })
   }
@@ -85,19 +80,18 @@ class App extends Component {
   }
 
   onSubmit(event) {
-    console.log("submitting to IPFS")
     event.preventDefault()
-    console.log("this.state.buffer", this.state.buffer)
-    ipfsInstance.files.add(this.state.buffer, (error, result) => {
-      console.log("added")
+    ipfsInstance.files.add(this.state.buffer, (error, result) => { // submitting file to ipfs
+      console.log("added to ipfs")
       if(error) {
-        console.error(error)
+        console.error("error", error)
         return
       }
-      console.log("result[0]",result[0])
+      console.log("result[0]",result[0]) // maybe set result[0].hash to
       this.simpleStorageInstance.set(result[0].hash, { from: this.state.account }).then((r) => {
-        return this.setState({ ipfsInstanceHash: result[0].hash })
-        console.log('ipfsInstanceHash', this.state.ipfsInstanceHash)
+        console.log("got result")
+        return this.setState({ ipfsHash: result[0].hash }) // retrive ipfs value that was set to blockchain
+        console.log('ifpsInstanceHash', this.state.ifpsInstanceHash)
       })
     })
   }
@@ -114,7 +108,6 @@ class App extends Component {
           <div className="pure-g">
             <div className="pure-u-1-1">
               <h1>Welcome!</h1>
-              <img src={`https://ipfs.io/ipfs/${this.state.ipfsHash}`} alt=""/>
               <h2>Upload Your Doc...</h2>
               <form onSubmit={this.onSubmit} >
                 <input type='file' onChange={this.captureFile} />
@@ -123,6 +116,7 @@ class App extends Component {
 
               <h1>Your Doc</h1>
               <p>This document is stored on The Ethereum Blockchain!</p>
+              <img src={`https://ipfs.io/ipfs/${this.state.ipfsInstanceHash}`} alt=""/>
             </div>
           </div>
         </main>
