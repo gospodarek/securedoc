@@ -67,3 +67,23 @@ code {
   height: 16px;
   margin-right: 10px;
 }
+
+/* Create two equal columns that floats next to each other */
+.left {
+  float: left;
+  width: 48%;
+  padding: 10px;
+  /* height: 300px; */
+}
+.right {
+  float: right;
+  width:48%;
+  padding: 10px;
+  /* height: 300px; */
+}
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}

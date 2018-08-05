@@ -98,7 +98,7 @@ class App extends Component {
   }
 
   findDoc(event) {
-    console.log("finding doc")
+    console.log("finding image")
     event.preventDefault()
   }
 
@@ -106,28 +106,37 @@ class App extends Component {
     return (
       <div className="App">
         <nav className="navbar pure-menu pure-menu-horizontal">
-            <a href="#" className="pure-menu-heading pure-menu-link">Secure Doc</a>Store your docs between the planets
+            <a href="#" className="pure-menu-heading pure-menu-link">Secure Image</a>Store your image with IPFS
         </nav>
 
         <main className="container">
           <div className="pure-g">
             <div className="pure-u-1-1">
-              <h1>Welcome!</h1>
-              <h2>Upload Your Doc...</h2>
-              <form onSubmit={this.onSubmit} >
-                <input type='file' onChange={this.captureFile} />
-                <input type='submit' />
-              </form>
-              <h2>Retrieve and Confirm Your Doc...</h2>
-              <form >
-                <input type="text" onChange={ this.handleChange } />
-                <input type='button' onClick={this.findDoc} />
-              </form>
-              <h1>We Found Your Doc</h1>
-              <img src={`https://ipfs.io/ipfs/${this.state.input}`} alt=""/>
-              <h1>Your Doc</h1>
-              <p>This document is stored on The Ethereum Blockchain!</p>
-              <img src={`https://ipfs.io/ipfs/${this.state.ipfsInstanceHash}`} alt=""/>
+
+              <div className="row">
+                <div className="left">
+                  <h2>Upload Your Image...</h2>
+                  <form onSubmit={this.onSubmit} >
+                    <input type='file' onChange={this.captureFile} />
+                    <input type='submit' />
+                  </form>
+                  <h3>Your Image</h3>
+                  <p>This image is stored on The Ethereum Blockchain!</p>
+                  <p>Hash: {this.props.ifpsInstanceHash}</p>
+                  <img src={`https://ipfs.io/ipfs/${this.state.ipfsInstanceHash}`} alt=""/>
+                </div>
+
+                <div className="right">
+                  <h2>Retrieve and Confirm an Image...</h2>
+                  <p>An image will appear if an image match is found in IPFS.</p>
+                  <form >
+                    <input type="text" onChange={ this.handleChange } size="50" placeholder="Image hash..."/>
+                    <input type='submit' onClick={this.findDoc} />
+                  </form>
+                  <img src={`https://ipfs.io/ipfs/${this.state.input}`} alt=""/>
+                </div>
+              </div>
+
             </div>
           </div>
         </main>
@@ -135,5 +144,6 @@ class App extends Component {
     );
   }
 }
+
 
 export default App
