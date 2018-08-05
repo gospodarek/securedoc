@@ -16,15 +16,17 @@ class App extends Component {
       ipfsInstanceHash: '',
       web3: null,
       buffer: null,
-      account: null
+      account: null,
+      input: ''
     }
     this.captureFile = this.captureFile.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.findDoc = this.findDoc.bind(this);
   }
 
   componentWillMount() {
     // Get network provider and web3 instance.
-    // See utils/getWeb3 for more info.
 
     getWeb3
     .then(results => {
@@ -41,18 +43,12 @@ class App extends Component {
   }
 
   instantiateContract() {
-    /*
-     * SMART CONTRACT EXAMPLE
-     *
-     * Normally these functions would be called in the context of a
-     * state management library, but for convenience I've placed them here.
-     */
 
     const contract = require('truffle-contract')
     const simpleStorage = contract(SimpleStorageContract)
     simpleStorage.setProvider(this.state.web3.currentProvider)
 
-    // Get accounts.s
+    // Get accounts
     this.state.web3.eth.getAccounts((error, accounts) => {
       simpleStorage.deployed().then((instance) => {
         this.simpleStorageInstance = instance
@@ -68,7 +64,6 @@ class App extends Component {
   }
 
   captureFile(event) {
-    // need to format file here
     console.log("capturing file")
     event.preventDefault()
     const file = event.target.files[0]
@@ -87,15 +82,25 @@ class App extends Component {
         console.error("error", error)
         return
       }
-      console.log("result[0]",result[0]) // maybe set result[0].hash to
+      console.log("ipfs hash:",result[0].hash) // maybe set result[0].hash to
       this.simpleStorageInstance.set(result[0].hash, { from: this.state.account }).then((r) => {
-        console.log("got result")
-        return this.setState({ ipfsHash: result[0].hash }) // retrive ipfs value that was set to blockchain
+        console.log("got result", result[0])
+        return this.setState({ ipfsInstanceHash: result[0].hash }) // retrieve ipfs value that was set to blockchain
         console.log('ifpsInstanceHash', this.state.ifpsInstanceHash)
       })
     })
   }
 
+  handleChange(event) {
+    console.log("handling", event.target.value)
+    this.setState({ input: event.target.value })
+    console.log('input', this.state.input)
+  }
+
+  findDoc(event) {
+    console.log("finding doc")
+    event.preventDefault()
+  }
 
   render() {
     return (
@@ -113,7 +118,13 @@ class App extends Component {
                 <input type='file' onChange={this.captureFile} />
                 <input type='submit' />
               </form>
-
+              <h2>Retrieve and Confirm Your Doc...</h2>
+              <form >
+                <input type="text" onChange={ this.handleChange } />
+                <input type='button' onClick={this.findDoc} />
+              </form>
+              <h1>We Found Your Doc</h1>
+              <img src={`https://ipfs.io/ipfs/${this.state.input}`} alt=""/>
               <h1>Your Doc</h1>
               <p>This document is stored on The Ethereum Blockchain!</p>
               <img src={`https://ipfs.io/ipfs/${this.state.ipfsInstanceHash}`} alt=""/>
