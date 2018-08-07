@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import SimpleStorageContract from '../build/contracts/SimpleStorage.json'
+import ImageStorageContract from '../build/contracts/ImageStorage.json'
 import getWeb3 from './utils/getWeb3'
 import ipfsInstance from './ipfs'
 
@@ -45,17 +45,16 @@ class App extends Component {
   instantiateContract() {
 
     const contract = require('truffle-contract')
-    const simpleStorage = contract(SimpleStorageContract)
-    simpleStorage.setProvider(this.state.web3.currentProvider)
+    const imageStorage = contract(ImageStorageContract)
+    imageStorage.setProvider(this.state.web3.currentProvider)
 
     // Get accounts
     this.state.web3.eth.getAccounts((error, accounts) => {
-      simpleStorage.deployed().then((instance) => {
-        this.simpleStorageInstance = instance
-        console.log("account: ", accounts[0])
+      imageStorage.deployed().then((instance) => {
+        this.imageStorageInstance = instance
         this.setState({ account: accounts[0] }) // the account connected to blockchain
         // Read the value from the contract to prove it worked.
-        return this.simpleStorageInstance.get.call(accounts[0])
+        return this.imageStorageInstance.verifyImage.call(accounts[0])
       }).then((ipfsInstanceHash) => {
         // Update state with value that was set to blockchain
         return this.setState({ ipfsInstanceHash })
@@ -64,26 +63,25 @@ class App extends Component {
   }
 
   captureFile(event) {
-    console.log("capturing file")
     event.preventDefault()
     const file = event.target.files[0]
     const reader = new window.FileReader()
     reader.readAsArrayBuffer(file)
     reader.onloadend = () => {
       this.setState({ buffer: Buffer.from(reader.result) })
+      console.log("captured image")
     }
   }
 
   onSubmit(event) {
     event.preventDefault()
     ipfsInstance.files.add(this.state.buffer, (error, result) => { // submitting file to ipfs
-      console.log("added to ipfs")
+      console.log("IPFS hash: ", result[0].hash )
       if(error) {
         console.error("error", error)
         return
       }
-      console.log("ipfs hash:",result[0].hash) // maybe set result[0].hash to
-      this.simpleStorageInstance.set(result[0].hash, { from: this.state.account }).then((r) => {
+      this.imageStorageInstance.saveImage(result[0].hash, { from: this.state.account }).then((r) => {
         console.log("got result", result[0])
         return this.setState({ ipfsInstanceHash: result[0].hash }) // retrieve ipfs value that was set to blockchain
         console.log('ifpsInstanceHash', this.state.ifpsInstanceHash)
@@ -122,7 +120,7 @@ class App extends Component {
                   </form>
                   <h3>Your Image</h3>
                   <p>This image is stored on The Ethereum Blockchain!</p>
-                  <p>Hash: {this.props.ifpsInstanceHash}</p>
+                  <p>Hash: {this.state.ifpsInstanceHash}</p>
                   <img src={`https://ipfs.io/ipfs/${this.state.ipfsInstanceHash}`} alt=""/>
                 </div>
 
