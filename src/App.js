@@ -18,12 +18,12 @@ class App extends Component {
       buffer: null,
       account: null,
       input: '',
-      isOwner: ''
+      isOwner: false
     }
-    this.captureFile = this.captureFile.bind(this);
+    this.captureImage = this.captureImage.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.findDoc = this.findDoc.bind(this);
+    this.verifyImage = this.verifyImage.bind(this);
   }
 
   componentWillMount() {
@@ -67,7 +67,7 @@ class App extends Component {
     })
   }
 
-  captureFile(event) {
+  captureImage(event) {
     event.preventDefault()
     const file = event.target.files[0]
     const reader = new window.FileReader()
@@ -86,7 +86,7 @@ class App extends Component {
         console.error("error", error)
         return
       }
-      this.imageStorageInstance.saveImage(result[0].hash, { from: this.state.account }).then((r) => {
+      this.imageStorageInstance.saveImageHash(result[0].hash, { from: this.state.account }).then((r) => {
         console.log("got result", result[0].hash)
         return this.setState({ ipfsInstanceHash: result[0].hash }) // retrieve ipfs value that was set to blockchain
       })
@@ -99,12 +99,12 @@ class App extends Component {
     console.log('input', this.state.input)
   }
 
-  findDoc(event) {
+  verifyImage(event) {
     console.log("finding image")
     event.preventDefault()
-    this.imageStorageInstance.verifyImage(this.state.ipfsInstanceHash).then((r) => {
-      console.log("maybe verified?", r[2])
-      return this.setState({ isOwner: r[2] })
+    this.imageStorageInstance.verifyImageOwner(this.state.ipfsInstanceHash).then((r) => {
+      console.log("maybe verified?", r)
+      return this.setState({ isOwner: r })
     })
   }
 
@@ -123,7 +123,7 @@ class App extends Component {
                 <div className="left">
                   <h2>Upload Your Image...</h2>
                   <form onSubmit={this.onSubmit} >
-                    <input type='file' onChange={this.captureFile} />
+                    <input type='file' onChange={this.captureImage} />
                     <input type='submit' />
                   </form>
                   <h3>Your Image</h3>
@@ -137,7 +137,7 @@ class App extends Component {
                   <p>An image will appear if an image match is found in IPFS.</p>
                   <form >
                     <input type="text" onChange={ this.handleChange } size="50" placeholder="Image hash..."/>
-                    <input type='submit' onClick={this.findDoc} />
+                    <input type='submit' onClick={this.verifyImage} />
                   </form>
                   <p>Is Owner: {this.state.isOwner}</p>
                   <img src={`https://ipfs.io/ipfs/${this.state.input}`} alt=""/>
