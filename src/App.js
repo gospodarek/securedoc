@@ -17,7 +17,8 @@ class App extends Component {
       web3: null,
       buffer: null,
       account: null,
-      input: ''
+      input: '',
+      isOwner: ''
     }
     this.captureFile = this.captureFile.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
@@ -50,14 +51,18 @@ class App extends Component {
 
     // Get accounts
     this.state.web3.eth.getAccounts((error, accounts) => {
+      console.log("getting account")
       imageStorage.deployed().then((instance) => {
+        console.log("deployed")
         this.imageStorageInstance = instance
         this.setState({ account: accounts[0] }) // the account connected to blockchain
+        console.log("Just set state account")
         // Read the value from the contract to prove it worked.
-        return this.imageStorageInstance.verifyImage.call(accounts[0])
-      }).then((ipfsInstanceHash) => {
-        // Update state with value that was set to blockchain
-        return this.setState({ ipfsInstanceHash })
+        // return this.imageStorageInstance.verifyImage.call(accounts[0])
+      // }).then((ipfsInstanceHash) => {
+      //   console.log("then", ipfsInstanceHash)
+      //   // Update state with value that was set to blockchain
+      //   return this.setState({ ipfsInstanceHash })
       })
     })
   }
@@ -82,9 +87,8 @@ class App extends Component {
         return
       }
       this.imageStorageInstance.saveImage(result[0].hash, { from: this.state.account }).then((r) => {
-        console.log("got result", result[0])
+        console.log("got result", result[0].hash)
         return this.setState({ ipfsInstanceHash: result[0].hash }) // retrieve ipfs value that was set to blockchain
-        console.log('ifpsInstanceHash', this.state.ifpsInstanceHash)
       })
     })
   }
@@ -98,6 +102,10 @@ class App extends Component {
   findDoc(event) {
     console.log("finding image")
     event.preventDefault()
+    this.imageStorageInstance.verifyImage(this.state.ipfsInstanceHash).then((r) => {
+      console.log("maybe verified?", r[2])
+      return this.setState({ isOwner: r[2] })
+    })
   }
 
   render() {
@@ -120,7 +128,7 @@ class App extends Component {
                   </form>
                   <h3>Your Image</h3>
                   <p>This image is stored on The Ethereum Blockchain!</p>
-                  <p>Hash: {this.state.ifpsInstanceHash}</p>
+                  <p>Hash: {this.state.ipfsInstanceHash}</p>
                   <img src={`https://ipfs.io/ipfs/${this.state.ipfsInstanceHash}`} alt=""/>
                 </div>
 
@@ -131,6 +139,7 @@ class App extends Component {
                     <input type="text" onChange={ this.handleChange } size="50" placeholder="Image hash..."/>
                     <input type='submit' onClick={this.findDoc} />
                   </form>
+                  <p>Is Owner: {this.state.isOwner}</p>
                   <img src={`https://ipfs.io/ipfs/${this.state.input}`} alt=""/>
                 </div>
               </div>
