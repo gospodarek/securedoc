@@ -51,18 +51,10 @@ class App extends Component {
 
     // Get accounts
     this.state.web3.eth.getAccounts((error, accounts) => {
-      console.log("getting account")
       imageStorage.deployed().then((instance) => {
-        console.log("deployed")
         this.imageStorageInstance = instance
-        this.setState({ account: accounts[0] }) // the account connected to blockchain
-        console.log("Just set state account")
-        // Read the value from the contract to prove it worked.
-        // return this.imageStorageInstance.verifyImage.call(accounts[0])
-      // }).then((ipfsInstanceHash) => {
-      //   console.log("then", ipfsInstanceHash)
-      //   // Update state with value that was set to blockchain
-      //   return this.setState({ ipfsInstanceHash })
+         // the account connected to blockchain
+        this.setState({ account: accounts[0] })
       })
     })
   }
@@ -73,38 +65,34 @@ class App extends Component {
     const reader = new window.FileReader()
     reader.readAsArrayBuffer(file)
     reader.onloadend = () => {
+      //Buffer allows us to create a stream of binary data to post image to ipfs
       this.setState({ buffer: Buffer.from(reader.result) })
-      console.log("captured image")
     }
   }
 
   onSubmit(event) {
     event.preventDefault()
-    ipfsInstance.files.add(this.state.buffer, (error, result) => { // submitting file to ipfs
-      console.log("IPFS hash: ", result[0].hash )
+    // uploading image to ipfs
+    ipfsInstance.files.add(this.state.buffer, (error, result) => {
       if(error) {
         console.error("error", error)
         return
       }
       this.imageStorageInstance.saveImageHash(result[0].hash, { from: this.state.account }).then((r) => {
-        console.log("got result", result[0].hash)
-        return this.setState({ ipfsInstanceHash: result[0].hash }) // retrieve ipfs value that was set to blockchain
+        console.log("result hash", result[0].hash)
+        return this.setState({ ipfsInstanceHash: result[0].hash })
       })
     })
   }
 
   handleChange(event) {
-    console.log("handling", event.target.value)
     this.setState({ input: event.target.value })
-    console.log('input', this.state.input)
   }
 
   verifyImage(event) {
-    console.log("finding image")
     event.preventDefault()
-    this.imageStorageInstance.verifyImageOwner(this.state.ipfsInstanceHash).then((r) => {
-      console.log("maybe verified?", r)
-      return this.setState({ isOwner: r })
+    this.imageStorageInstance.verifyImageOwner(this.state.input).then((r) => {
+      this.setState({ isOwner: r.toString() })
     })
   }
 

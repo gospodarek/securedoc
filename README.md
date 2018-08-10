@@ -8,6 +8,7 @@ A simple DApp allowing a user to store image hashes and account addresses on the
 
 ## Requirements
 [node v8.11.3/npm 5.6.0]
+ipfs???
 
 ## Getting started
 1. git clone https://github.com/gospodarek/securedoc.git
