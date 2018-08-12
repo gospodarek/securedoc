@@ -7,6 +7,8 @@ contract ImageStorage {
     address public owner;
     bool public stopped;
 
+    event LogReturnValue(string hash);
+
     struct ImageStore {
         string ipfsInstanceHash;
         address imageOwner;
@@ -26,21 +28,24 @@ contract ImageStorage {
     /// @notice Store image hash on blockchain
     /// @dev Receive image hash from FE, create imageStore struct
     function saveImageHash(string imageHash) external restricted() returns (string) {
-        require(bytes(imageHash).length > 0, "Image hash is not long enough.");// throw exception if input is not valid
+        // throw exception if input is not valid
+        require(bytes(imageHash).length > 0, "Image hash is not long enough.");
         imageStorage[imageHash] = ImageStore({ipfsInstanceHash: imageHash, imageOwner: msg.sender});
+        emit LogReturnValue(imageStorage[imageHash].ipfsInstanceHash);
+        return imageStorage[imageHash].ipfsInstanceHash;
     }
 
     /// @notice Verify image hash belongs to account owner
     /// @dev Receive image hash from FE
     /// @return boolean indicating whether mapping with image hash and owner address was found
     function verifyImageOwner(string imageHash) external view restricted() returns (bool) {
-        require(bytes(imageHash).length > 0, "Image hash is not long enough."); // throw exception if input is not valid
+        // throw exception if input is not valid
+        require(bytes(imageHash).length > 0, "Image hash is not long enough.");
         if (imageStorage[imageHash].imageOwner==owner) {
             return true;
         } else {
             return false;
         }
-        // return (imageStorage[imageHash].imageOwner, imageStorage[imageHash].ipfsInstanceHash, imageStorage[imageHash].imageOwner==owner);
     }
 
     /// @dev Pause contract functionality
@@ -53,3 +58,4 @@ contract ImageStorage {
         selfdestruct(owner);
     }
 }
+

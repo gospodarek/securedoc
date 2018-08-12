@@ -1,5 +1,5 @@
 # PROJECT Secure Doc
-A simple DApp allowing a user to store image hashes and account addresses on the Ethereum blockchain. IPFS is used to store the actual image.
+A simple DApp allowing a user to store image hashes and account addresses on the Ethereum blockchain. IPFS has been integrated with to store the actual image.
 
 1. Upload an image.
 2. On submit:
