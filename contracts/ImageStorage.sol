@@ -43,7 +43,13 @@ contract ImageStorage {
         // return (imageStorage[imageHash].imageOwner, imageStorage[imageHash].ipfsInstanceHash, imageStorage[imageHash].imageOwner==owner);
     }
 
+    /// @dev Pause contract functionality
     function circuitBreaker(bool _stopped) external restricted() {
         stopped = _stopped;
+    }
+
+    /// @dev Self Destruct Contract
+    function kill() public restricted() {
+        selfdestruct(owner);
     }
 }

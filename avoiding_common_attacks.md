@@ -14,6 +14,7 @@ A circuit breaker design pattern has been implemented for when things go wrong.
 Although this app does not include functions that call other functions or share state, one would minimize this risk by treating all external functions as insecure (marking them insecure). Additionally, it is recommended that functions complete all internal work before making any external calls.
 
 # Reentrancy
+Due to the simple nature of this app, there is minimal risk for reentrance.
 
 # Timestamp Dependence
 While this app does not currently make use of timestamp future enhancements could include an image owner wanting to prove they are the original owner by way of timestamp. In this case the use of block.timestamp would be sufficient.
@@ -22,4 +23,4 @@ While this app does not currently make use of timestamp future enhancements coul
 This app does not loop over an array of unknown size and therefore has minimal risk for this security issue.
 
 # Forcibly Sending Ether to a Contract
-This app currently does not accept any sort of payment transfer.
+Although the app does not accept Ether payments, Ether can be forcibly sent via the selfdestruct() method. If future enhancements included payments, precautions would be taken to secure logic that included contract balance.

@@ -109,25 +109,25 @@ class App extends Component {
 
               <div className="row">
                 <div className="left">
-                  <h2>Upload Your Image...</h2>
+                  <h2>1. Upload Your Image</h2>
                   <form onSubmit={this.onSubmit} >
                     <input type='file' onChange={this.captureImage} />
                     <input type='submit' />
                   </form>
                   <h3>Your Image</h3>
                   <p>This image is stored on The Ethereum Blockchain!</p>
-                  <p>Hash: {this.state.ipfsInstanceHash}</p>
+                  <p>Image Hash: {this.state.ipfsInstanceHash}</p>
                   <img src={`https://ipfs.io/ipfs/${this.state.ipfsInstanceHash}`} alt=""/>
                 </div>
 
                 <div className="right">
-                  <h2>Retrieve and Confirm an Image...</h2>
+                  <h2>2. Retrieve and Confirm an Image</h2>
                   <p>An image will appear if an image match is found in IPFS.</p>
                   <form >
-                    <input type="text" onChange={ this.handleChange } size="50" placeholder="Image hash..."/>
-                    <input type='submit' onClick={this.verifyImage} />
+                    <input type="text" onChange={ this.handleChange } size="50" placeholder="Image Hash..."/>
+                    <input type='submit' onClick={this.verifyImage} value="Retrieve" />
                   </form>
-                  <p>Is Owner: {this.state.isOwner}</p>
+                  <p>Are you the owner of this image? {this.state.isOwner}</p>
                   <img src={`https://ipfs.io/ipfs/${this.state.input}`} alt=""/>
                 </div>
               </div>

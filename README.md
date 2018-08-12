@@ -2,13 +2,16 @@
 A simple DApp allowing a user to store image hashes and account addresses on the Ethereum blockchain. IPFS is used to store the actual image.
 
 1. Upload an image.
-2. Image is then formatted properly to be uploaded to IPFS. An image hash is returned to the UI.
-3. The smart contract then stores the IPFS hash along with the owner address on the Ethereum blockchain.
-4. With the image hash a user can query IPFS for the actual image and verify on the blockchain that they are the owner of the image.
+2. On submit:
+    a. Image is formatted properly to be uploaded to IPFS. An image hash is returned to the UI and the image is displayed.
+    b. The smart contract stores the IPFS hash along with the owner address on the Ethereum blockchain.
+3. Paste image hash into field.
+4. On retrieve:
+    a. IPFS is queried for the image and displayed if found.
+    b. The smart contract is queried for owner address and image hash match. A value of true or false is returned and displayed in the UI.
 
 ## Requirements
 [node v8.11.3/npm 5.6.0]
-ipfs???
 
 ## Getting started
 1. git clone https://github.com/gospodarek/securedoc.git
@@ -16,7 +19,7 @@ ipfs???
 1. ```npm install -g truffle```
 1. ```npm install -g ganache-cli```
 1. ```ganache-cli```
-1. Open new tab in terminal then:
+1. In terminal:
 1. ```cd securedoc```
 1. ```npm install```
 1. ```truffle compile```
@@ -27,8 +30,11 @@ ipfs???
 ## Running unit tests
   1. Run `truffle test` to execute the unit tests
 
-## User stories
-
+## Troubleshooting
+  1. Run `truffle migrate --rest` to reset the app
 
 ## ToDo
-
+1. Create user/login functionality
+2. Use Oracle library for querying IPFS for image data.
+3. Create admin user for enhanced functiality - circuit breaker, mortal.
+4. Accept payments for the image storage service.
