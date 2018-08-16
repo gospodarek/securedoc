@@ -9,6 +9,7 @@ A simple DApp allowing a user to store image hashes and account addresses on the
 4. On retrieve:
     a. IPFS is queried for the image and displayed if found.
     b. The smart contract is queried for owner address and image hash match. A value of true or false is returned and displayed in the UI.
+5. Please refresh the page if you change accounts. This will redeploy the app and update the state with the current account.
 
 ## Requirements
 [node v8.11.3/npm 5.6.0]
@@ -26,6 +27,8 @@ A simple DApp allowing a user to store image hashes and account addresses on the
 1. ```truffle migrate```
 1. ```npm run start```
 // Serves the front-end on http://localhost:3000
+
+## User Stories
 
 ## Running unit tests
   1. Run `truffle test` to execute the unit tests

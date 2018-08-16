@@ -101,6 +101,7 @@ class App extends Component {
       <div className="App">
         <nav className="navbar pure-menu pure-menu-horizontal">
             <a href="#" className="pure-menu-heading pure-menu-link">Secure Image</a>Store your image with IPFS
+            <p className="navbar-right">Current account: {this.state.account}</p>
         </nav>
 
         <main className="container">

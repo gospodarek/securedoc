@@ -1,9 +1,10 @@
 pragma solidity ^0.4.24;
+import "github.com/oraclize/ethereum-api/oraclizeAPI.sol";
 
 /// @title Image Storage
 /// @author Marsha Gospodarek
 
-contract ImageStorage {
+contract ImageStorage is usingOraclize  {
     address public owner;
     bool public stopped;
 
