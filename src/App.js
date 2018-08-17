@@ -53,9 +53,8 @@ class App extends Component {
     this.state.web3.eth.getAccounts((error, accounts) => {
       imageStorage.deployed().then((instance) => {
         this.imageStorageInstance = instance
-         // the account connected to blockchain
+        // the account connected to blockchain
         this.setState({ account: accounts[0] })
-        console.log("account in deploy: ", this.state.account)
       })
     })
   }
@@ -79,9 +78,8 @@ class App extends Component {
         console.error("error", error)
         return
       }
-      console.log("this state account right before save: ", this.state.account)
       this.imageStorageInstance.saveImageHash(result[0].hash, { from: this.state.account }).then((r) => {
-        console.log("result hash", result[0].hash)
+        console.log("result hash", r)
         return this.setState({ ipfsInstanceHash: result[0].hash })
       })
     })
@@ -93,9 +91,8 @@ class App extends Component {
 
   verifyImage(event) {
     event.preventDefault()
-    console.log("this state account right before verify: ", this.state.account)
-    this.imageStorageInstance.verifyImageOwner(this.state.input).then((r) => {
-      this.setState({ isOwner: r.toString() })
+    this.imageStorageInstance.verifyImageOwner(this.state.input, { from: this.state.account }).then((r) => {
+      this.setState({ isOwner: r[1].toString() })
     })
   }
 

@@ -8,8 +8,10 @@ import "./oraclize/usingOraclize.sol";
 contract ImageStorage is usingOraclize  {
     address public owner;
     bool public stopped;
+    bool public ownsimage;
 
     event LogReturnValue(string hash);
+    event LogSender(address sender);
 
     struct ImageStore {
         string ipfsInstanceHash;
@@ -19,45 +21,44 @@ contract ImageStorage is usingOraclize  {
     mapping(string => ImageStore) imageStorage;
 
     constructor() public {
-        owner = msg.sender;
         stopped = false;
-    }
-
-    modifier restricted() {
-        if (msg.sender == owner) _;
     }
 
     /// @notice Store image hash on blockchain
     /// @dev Receive image hash from FE, create imageStore struct
-    function saveImageHash(string imageHash) external restricted() returns (string) {
+    function saveImageHash(string imageHash) external returns (address) {
         // throw exception if input is not valid
         require(bytes(imageHash).length > 0, "Image hash is not long enough.");
         imageStorage[imageHash] = ImageStore({ipfsInstanceHash: imageHash, imageOwner: msg.sender});
         emit LogReturnValue(imageStorage[imageHash].ipfsInstanceHash);
-        return imageStorage[imageHash].ipfsInstanceHash;
+        emit LogSender(msg.sender);
+        return msg.sender;
     }
 
     /// @notice Verify image hash belongs to account owner
     /// @dev Receive image hash from FE
     /// @return boolean indicating whether mapping with image hash and owner address was found
-    function verifyImageOwner(string imageHash) external view restricted() returns (bool) {
+    function verifyImageOwner(string imageHash) external view returns (address, bool) {
         // throw exception if input is not valid
         require(bytes(imageHash).length > 0, "Image hash is not long enough.");
+        emit LogSender(msg.sender);
+
         if (imageStorage[imageHash].imageOwner==msg.sender) {
-            return true;
+            ownsimage = true;
         } else {
-            return false;
+            ownsimage = false;
         }
+        return(msg.sender, ownsimage);
     }
 
     /// @dev Pause contract functionality
-    function circuitBreaker(bool _stopped) external restricted() {
+    function circuitBreaker(bool _stopped) external {
         stopped = _stopped;
     }
 
     /// @dev Self Destruct Contract
-    function kill() public restricted() {
-        selfdestruct(owner);
+    function kill() public  {
+        // selfdestruct(owner);
     }
 }
 
