@@ -6,7 +6,7 @@ import "./oraclize/usingOraclize.sol";
 /// @dev Future intention to implement Oraclize for interacting with IPFS
 
 contract ImageStorage is usingOraclize  {
-    address public owner;
+    address public contractOwner;
     bool public stopped;
     bool public ownsimage;
 
@@ -21,7 +21,12 @@ contract ImageStorage is usingOraclize  {
     mapping(string => ImageStore) imageStorage;
 
     constructor() public {
+        contractOwner = msg.sender;
         stopped = false;
+    }
+
+    modifier restricted() {
+        if (msg.sender == contractOwner) _;
     }
 
     /// @notice Store image hash on blockchain
@@ -52,13 +57,13 @@ contract ImageStorage is usingOraclize  {
     }
 
     /// @dev Pause contract functionality
-    function circuitBreaker(bool _stopped) external {
+    function circuitBreaker(bool _stopped) external restricted() {
         stopped = _stopped;
     }
 
     /// @dev Self Destruct Contract
-    function kill() public  {
-        // selfdestruct(owner);
+    function kill() public restricted() {
+        selfdestruct(contractOwner);
     }
 }
 
