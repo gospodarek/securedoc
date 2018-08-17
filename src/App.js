@@ -55,6 +55,7 @@ class App extends Component {
         this.imageStorageInstance = instance
          // the account connected to blockchain
         this.setState({ account: accounts[0] })
+        console.log("account in deploy: ", this.state.account)
       })
     })
   }
@@ -78,6 +79,7 @@ class App extends Component {
         console.error("error", error)
         return
       }
+      console.log("this state account right before save: ", this.state.account)
       this.imageStorageInstance.saveImageHash(result[0].hash, { from: this.state.account }).then((r) => {
         console.log("result hash", result[0].hash)
         return this.setState({ ipfsInstanceHash: result[0].hash })
@@ -91,6 +93,7 @@ class App extends Component {
 
   verifyImage(event) {
     event.preventDefault()
+    console.log("this state account right before verify: ", this.state.account)
     this.imageStorageInstance.verifyImageOwner(this.state.input).then((r) => {
       this.setState({ isOwner: r.toString() })
     })
@@ -116,7 +119,7 @@ class App extends Component {
                     <input type='submit' />
                   </form>
                   <h3>Your Image</h3>
-                  <p>This image is stored on The Ethereum Blockchain!</p>
+                  <p>This image data is now stored on The Ethereum Blockchain!</p>
                   <p>Image Hash: {this.state.ipfsInstanceHash}</p>
                   <img src={`https://ipfs.io/ipfs/${this.state.ipfsInstanceHash}`} alt=""/>
                 </div>

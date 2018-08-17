@@ -1,8 +1,9 @@
 pragma solidity ^0.4.24;
-import "github.com/oraclize/ethereum-api/oraclizeAPI.sol";
+import "./oraclize/usingOraclize.sol";
 
 /// @title Image Storage
 /// @author Marsha Gospodarek
+/// @dev Future intention to implement Oraclize for interacting with IPFS
 
 contract ImageStorage is usingOraclize  {
     address public owner;
@@ -42,7 +43,7 @@ contract ImageStorage is usingOraclize  {
     function verifyImageOwner(string imageHash) external view restricted() returns (bool) {
         // throw exception if input is not valid
         require(bytes(imageHash).length > 0, "Image hash is not long enough.");
-        if (imageStorage[imageHash].imageOwner==owner) {
+        if (imageStorage[imageHash].imageOwner==msg.sender) {
             return true;
         } else {
             return false;
