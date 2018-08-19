@@ -29,8 +29,7 @@ contract ImageStorage is usingOraclize  {
         if (msg.sender == contractOwner) _;
     }
 
-    /// @notice Store image hash on blockchain
-    /// @dev Receive image hash from FE, create imageStore struct
+    /// @dev Receive image hash from FE, create imageStore struct and store on blockchain
     function saveImageHash(string imageHash) external returns (address) {
         // throw exception if input is not valid
         require(bytes(imageHash).length > 0, "Image hash is not long enough.");
@@ -40,9 +39,9 @@ contract ImageStorage is usingOraclize  {
         return msg.sender;
     }
 
-    /// @notice Verify image hash belongs to account owner
+    /// @notice Verify image hash belongs to account address
     /// @dev Receive image hash from FE
-    /// @return boolean indicating whether mapping with image hash and owner address was found
+    /// @return address, boolean indicating whether mapping with image hash and address was located
     function verifyImageOwner(string imageHash) external view returns (address, bool) {
         // throw exception if input is not valid
         require(bytes(imageHash).length > 0, "Image hash is not long enough.");
@@ -56,12 +55,12 @@ contract ImageStorage is usingOraclize  {
         return(msg.sender, ownsimage);
     }
 
-    /// @dev Pause contract functionality
+    /// @dev Pause contract functionality, retricted to contract owner
     function circuitBreaker(bool _stopped) external restricted() {
         stopped = _stopped;
     }
 
-    /// @dev Self Destruct Contract
+    /// @dev Self Destruct Contract, retricted to contract owner
     function kill() public restricted() {
         selfdestruct(contractOwner);
     }

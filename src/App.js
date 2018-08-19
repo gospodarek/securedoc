@@ -79,7 +79,7 @@ class App extends Component {
         return
       }
       this.imageStorageInstance.saveImageHash(result[0].hash, { from: this.state.account }).then((r) => {
-        console.log("result hash", r)
+        // console.log("result hash", r)
         return this.setState({ ipfsInstanceHash: result[0].hash })
       })
     })

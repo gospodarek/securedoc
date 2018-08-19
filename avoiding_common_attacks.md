@@ -2,7 +2,7 @@
 This app does make use of external function calls since they will only be called externally. While they have the potential for executing malicious code, attempst have been made to minimize this risk by avoiding the use of call.value(y)() which has the potential for being given all available gas.
 
 ## Restricting Access
-A modifier called restricted is used to restrict access to particular functions to the contract owner.
+A modifier called restricted is used to restrict access to particular functions to the contract owner (ex. circuitBreake()r, kill()).
 
 ## Pull over Push Payments
 This app currently does not deal with transfer of payments. Future enhancements that include payments would be secured by requiring the contract owner to initiate pulls from the contract instead of pushing payment updates.

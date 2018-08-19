@@ -1,11 +1,14 @@
 # PROJECT Secure Doc
 A simple DApp allowing a user to store image hashes and account addresses on the Ethereum blockchain. IPFS has been integrated with to store the actual image.
 
+## User Stories
+This project is based on the "Proof of Existence dApp". It allows a user to store image hashes to the blockchain and then query the blockchain for the image and ownership information.
+
 1. Upload an image.
 2. On submit:
     a. Image is formatted properly to be uploaded to IPFS. An image hash is returned to the UI and the image is displayed.
     b. The smart contract stores the IPFS hash along with the owner address on the Ethereum blockchain.
-3. Paste image hash into field.
+3. Paste image hash into verification field.
 4. On retrieve:
     a. IPFS is queried for the image and displayed if found.
     b. The smart contract is queried for owner address and image hash match. A value of true or false is returned and displayed in the UI.
@@ -27,8 +30,6 @@ A simple DApp allowing a user to store image hashes and account addresses on the
 1. ```truffle migrate```
 1. ```npm run start```
 // Serves the front-end on http://localhost:3000
-
-## User Stories
 
 ## Running unit tests
   1. Run `truffle test` to execute the unit tests
