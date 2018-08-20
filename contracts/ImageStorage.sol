@@ -1,11 +1,12 @@
 pragma solidity ^0.4.24;
 import "./oraclize/usingOraclize.sol";
+import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 
 /// @title Image Storage
 /// @author Marsha Gospodarek
 /// @dev Future intention to implement Oraclize for interacting with IPFS
 
-contract ImageStorage is usingOraclize  {
+contract ImageStorage is usingOraclize, Ownable  {
     address public contractOwner;
     bool public stopped;
     bool public ownsimage;
@@ -56,12 +57,12 @@ contract ImageStorage is usingOraclize  {
     }
 
     /// @dev Pause contract functionality, retricted to contract owner
-    function circuitBreaker(bool _stopped) external restricted() {
+    function circuitBreaker(bool _stopped) external onlyOwner() {
         stopped = _stopped;
     }
 
     /// @dev Self Destruct Contract, retricted to contract owner
-    function kill() public restricted() {
+    function kill() public onlyOwner() {
         selfdestruct(contractOwner);
     }
 }
