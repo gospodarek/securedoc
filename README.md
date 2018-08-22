@@ -1,5 +1,5 @@
 # PROJECT Secure Doc
-A simple DApp allowing a user to store image hashes and account addresses on the Ethereum blockchain. IPFS has been integrated with to store the actual image.
+A simple DApp allowing a user to store image hashes and account addresses on the Ethereum blockchain. Integration with IPFS to store the actual image.
 
 ## User Stories
 This project is based on the "Proof of Existence dApp". It allows a user to store image hashes to the blockchain and then query the blockchain for the image hash and ownership information.
@@ -20,16 +20,17 @@ This project is based on the "Proof of Existence dApp". It allows a user to stor
 
 ## Getting started
 1. git clone https://github.com/gospodarek/securedoc.git
-2. Install metamask and serve on port: 8545
+2. Install metamask
 3. ```npm install -g truffle```
 4. ```npm install -g ganache-cli```
 5. ```ganache-cli```
-6. In terminal:
-7. ```cd securedoc```
-8. ```npm install```
-9. ```truffle compile```
-10. ```truffle migrate```
-11. ```npm run start```
+6. Make sure metamask is connected to port 8545
+7. In terminal:
+8. ```cd securedoc```
+9. ```npm install```
+10. ```truffle compile```
+11. ```truffle migrate```
+12. ```npm run start```
 // Serves the front-end on http://localhost:3000
 
 ## Running unit tests
