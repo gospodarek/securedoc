@@ -4,74 +4,74 @@ contract('ImageStorage', function(accounts) {
   var accountAddress = accounts[0];
   var stopped;
 
-  // Testing the saveImageHash function - need to explain more!
+  // Testing that the saveImageHash function returns the image hash in its results that will be displayed in the UI
   it("...should return a hash string", function() {
     return ImageStorage.deployed().then(function(instance) {
       imageStorageInstance = instance;
 
-      return imageStorageInstance.saveImageHash("testing", {from: accountAddress});
+      return imageStorageInstance.saveImageHash("QmP8KwvBKDDd1gX3MuGjoXaaf7BG9LhBFk5pPCxtkULerF", {from: accountAddress});
     }).then(function(result) {
       console.log("result logs",result["logs"][0]["args"].hash)
 
-      assert.equal(result["logs"][0]["args"].hash, "testing");
+      assert.equal(result["logs"][0]["args"].hash, "QmP8KwvBKDDd1gX3MuGjoXaaf7BG9LhBFk5pPCxtkULerF");
     })
   });
 
-  // Throws error if hash is null
-  it("...should throw an error if image hash is null.", function() {
-    return ImageStorage.deployed().then(function(instance) {
-      imageStorageInstance = instance;
+  // Testing that the saveImageHash function throws an error if the image hash is not 46 characters long (IPFS length)
+  it("should throw an error if image hash is not valid length", async() => {
+    const instance = await ImageStorage.deployed()
 
-      return imageStorageInstance.saveImageHash("", {from: accountAddress});
-    }).then(function(result) {
-      console.log("res",result)
-      assert.equal(result[0], "", "The value 89 was not stored.");
-    })
-  });
+    let err = null
+    try {
+        await instance.saveImageHash({from: accountAddress, value: "not46characters"})
+    } catch (error) {
+      err = error
+    }
+    assert.ok(err instanceof Error)
+  })
 
-  // test init values
-  it("...should set initial variables", function() {
-    return ImageStorage.deployed().then(function(instance) {
-      imageStorageInstance = instance;
-      assert.equal(imageStorageInstance.stopped, false)
-    })
-  });
+  // Testing that initial values are set accordingly
+  it("should test intial stopped value", async() => {
+    const instance = await ImageStorage.deployed()
 
-  // test that returns false if no image hash for the current account owner is found on the blockchain
+    //get and test init stopped value
+    const initStopped = await instance.stopped.call()
+    assert.equal(initStopped, false, "Stopped should be false on init")
+  })
+
+  // Testing that the verifyImageOwner function returns false if no image hash belonging to current account address or any address is found on the blockchain
   it("...should return false value if no matching hash", function() {
     return ImageStorage.deployed().then(function(instance) {
       imageStorageInstance = instance;
 
-      return imageStorageInstance.verifyImageOwner("invalidhash");
+      return imageStorageInstance.verifyImageOwner("QmP8lwvBKDDd1gX3MuGjoXaaf7BG9LhBFk5pPCxtkULerF");
     }).then(function(result) {
       assert.equal(result[1], false);
     })
   });
 
-  // test that returns false if an image hash is found but not for the current account address
+  // Testing that the verifyImageOwner function returns false for the current account address even though the image hash was found
   it("...should return false value if hash doesn't match current account", function() {
     return ImageStorage.deployed().then(function(instance) {
       imageStorageInstance = instance;
 
-      imageStorageInstance.saveImageHash("abcdefgh", {from: accounts[1]});
-      return imageStorageInstance.verifyImageOwner("abcdefgh");
+      imageStorageInstance.saveImageHash("QmP8KwvBKDDd1gX3MuGjoXaaf7BG9LhBFk5pPCxtkULerF", {from: accounts[1]});
+      return imageStorageInstance.verifyImageOwner("QmP8KwvBKDDd1gX3MuGjoXaaf7BG9LhBFk5pPCxtkULerF");
     }).then(function(result) {
       assert.equal(result[1], false);
     })
   });
 
-  // test that returns true if an image, address hash match is found on the blockchain
+  // Testing that the verifyImageOwner function returns true if an image, current account address hash match is found on the blockchain
   it("...should return true value", function() {
     return ImageStorage.deployed().then(function(instance) {
       imageStorageInstance = instance;
 
-      imageStorageInstance.saveImageHash("abcdefgh", {from: accountAddress});
-      return imageStorageInstance.verifyImageOwner("abcdefgh");
+      imageStorageInstance.saveImageHash("QmP8KwvBKDDd1gX3MuGjoXaaf7BG9LhBFk5pPCxtkULerF", {from: accountAddress});
+      return imageStorageInstance.verifyImageOwner("QmP8KwvBKDDd1gX3MuGjoXaaf7BG9LhBFk5pPCxtkULerF");
     }).then(function(result) {
       assert.equal(result[1], true);
     })
   });
-
-  // test that restricted, don't pass in owner
 
 });

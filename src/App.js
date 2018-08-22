@@ -116,14 +116,14 @@ class App extends Component {
                     <input type='submit' />
                   </form>
                   <h3>Your Image</h3>
-                  <p>This image data is now stored on The Ethereum Blockchain!</p>
+                  <p>Image data for the image below is stored on The Ethereum Blockchain!</p>
                   <p>Image Hash: {this.state.ipfsInstanceHash}</p>
                   <img src={`https://ipfs.io/ipfs/${this.state.ipfsInstanceHash}`} alt=""/>
                 </div>
 
                 <div className="right">
-                  <h2>2. Retrieve and Confirm an Image</h2>
-                  <p>An image will appear if an image match is found in IPFS.</p>
+                  <h2>2. Retrieve and Confirm Image Ownership</h2>
+                  <p>An image will appear if an image match is found on IPFS.</p>
                   <form >
                     <input type="text" onChange={ this.handleChange } size="50" placeholder="Image Hash..."/>
                     <input type='submit' onClick={this.verifyImage} value="Retrieve" />

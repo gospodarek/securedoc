@@ -26,14 +26,10 @@ contract ImageStorage is usingOraclize, Ownable  {
         stopped = false;
     }
 
-    modifier restricted() {
-        if (msg.sender == contractOwner) _;
-    }
-
     /// @dev Receive image hash from FE, create imageStore struct and store on blockchain
     function saveImageHash(string imageHash) external returns (address) {
         // throw exception if input is not valid
-        require(bytes(imageHash).length > 0, "Image hash is not long enough.");
+        require(bytes(imageHash).length == 46, "Image hash is not long enough.");
         imageStorage[imageHash] = ImageStore({ipfsInstanceHash: imageHash, imageOwner: msg.sender});
         emit LogReturnValue(imageStorage[imageHash].ipfsInstanceHash);
         emit LogSender(msg.sender);
